@@ -14,6 +14,13 @@
 - Result: 测试结果
 - Software: WCHLINK固件烧录器、MATLAB上位机代码
 
+## 运行环境
+
+- Keil 5
+- STM32CubeMX
+- KiCAD 6
+- MATLAB 2023b
+
 ## 复刻流程
 
 1. PCB投板：可以直接拿gerber压缩包去投板
