@@ -12,7 +12,9 @@
 - Hardware: PCB工程
 - Mechanical: 测试架和磁铁胶囊的3D模型
 - Result: 测试结果
-- Software: WCHLINK固件烧录器、MATLAB上位机代码
+- Software: MATLAB上位机代码
+- Tools: WCHLINK固件、烧录器、配置器
+- Render: 渲染图
 
 ## 运行环境
 
