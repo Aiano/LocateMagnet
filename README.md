@@ -19,14 +19,14 @@
 - Keil 5
 - STM32CubeMX
 - KiCAD 6
-- MATLAB 2023b
+- MATLAB **2023b**
 
 ## 复刻流程
 
 1. PCB投板：可以直接拿gerber压缩包去投板
 2. 购买元件：bom文件夹里有元件清单
 3. 焊接：建议使用回流焊，没有的可以用热风枪代替，建议**先焊接除传感器外的其他元件**，测试可用后，再焊接传感器。该芯片是WLP晶圆级封装，很小，可以先在焊盘上涂助焊剂，放上芯片，热风枪吹焊，同时在显微镜下观察，当芯片轻微移动归位时，用镊子轻轻推动，如果芯片被推后能够归位，说明焊接成功。
-4. WCHLINK固件烧录：PCB板载一个WCHLINK，方便调试，先短接PCB上的UPG焊盘，连接PC，检测到设备后，使用WCHISPTool下载`WCHLINK_V02.03.bin`，然后把UPG焊盘断开，再次连接PC，如果使用Keil能检测到stm32芯片就算成功
+4. WCHLINK固件烧录：PCB板载一个WCHLINK，方便调试，先**短接**PCB上的**UPG焊盘**，连接PC，检测到设备后，使用**WCHISPTool**下载`WCHLINK_V02.03.bin`，然后把UPG焊盘断开，再次连接PC，初次烧录固件，WCHLINK处于RISC-V模式，打开WCH-LinkUtility，点Get获取当前Mode，切换成**WCH-LinkDAP-WINUSB**，点Set，配置好后WCHLINK会变成ARM模式，如果使用Keil能检测到stm32芯片就算成功
 5. stm32固件烧录：正常使用Keil下载代码，调试器选择DAPLINK
 6. 串口调试助手：使用DAPLINK自带的串口输出数据，如果传感器都正常，应该能读到U ··· V ··· W ···系列数据，不会有No Ack提示
 7. 打印测试架： 注意测试架只能放入直径3mm的小磁铁
