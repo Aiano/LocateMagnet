@@ -2,11 +2,15 @@
 
 ## 简介
 
-![PCBA](./Render/PCBA.jpg)
-
 ​	这个项目来源于一个课设，要求使用AMR磁传感器对小磁铁进行三维空间定位，定位范围1cm x 1cm x 1cm，定位精度要求达到0.1mm。
 
 ​	本项目采用了5x5 AMR磁传感器阵列，在远超课设要求的范围下，同时满足精度要求，此外还能实时检测，画出移动轨迹。
+
+<img src="README/PCBA.jpg" alt="PCBA" style="zoom:25%;" />
+
+<img src="./Result/正向摆放.jpg" alt="正向摆放" style="zoom: 20%;" />
+
+<img src="./Result/正向.png" alt="正向" style="zoom: 70%;" />
 
 ## 文件结构
 
