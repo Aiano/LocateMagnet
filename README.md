@@ -6,7 +6,7 @@
 
 ​	本项目采用了5x5 AMR磁传感器阵列，在远超课设要求的范围下，同时满足精度要求，此外还能实时检测，画出移动轨迹。
 
-<img src="README/PCBA.jpg" alt="PCBA" style="zoom:25%;" />
+<img src="./Render/PCBA.jpg" alt="PCBA" style="zoom:25%;" />
 
 <img src="./Result/正向摆放.jpg" alt="正向摆放" style="zoom: 20%;" />
 
