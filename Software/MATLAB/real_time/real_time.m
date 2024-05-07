@@ -22,7 +22,7 @@ trace = zeros(max_loop_times,6); % 轨迹点 m n p x y z
 trace_cnt = 0; % 轨迹点数
 
 delete(instrfindall);
-ser = serialport('COM19',115200); % 打开串口
+ser = serialport('COM21',115200); % 打开串口
 
 Bl_compensate = serial_parse(ser, sensor_N);
 
