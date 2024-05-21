@@ -25,9 +25,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stdio.h"
+#include <stdio.h>
 #include "math.h"
 #include "I2C_SW.h"
+#include <string.h>
+#include <stdlib.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -84,6 +86,8 @@ SWI2C sensorList[25]={
 	{GPIOB,GPIO_PIN_2,GPIOA,GPIO_PIN_4}
 
 };
+
+uint8_t txBuffer[1000];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -209,63 +213,29 @@ int main(void)
 	for(int i=0;i<25;i++){
 		readSensorData(sensorList[i],(uint32_t*)sensorValBuffer[i/5][i%5]);
 	}
-	TIM2->CNT =0;
+	//uint8_t strLen = 
+	sprintf((char *)txBuffer, "U %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n"
+														"V %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n"
+														"W %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
+														sensorValBuffer[0][0][0],sensorValBuffer[0][1][0],sensorValBuffer[0][2][0],sensorValBuffer[0][3][0],sensorValBuffer[0][4][0],
+														sensorValBuffer[1][0][0],sensorValBuffer[1][1][0],sensorValBuffer[1][2][0],sensorValBuffer[1][3][0],sensorValBuffer[1][4][0],
+														sensorValBuffer[2][0][0],sensorValBuffer[2][1][0],sensorValBuffer[2][2][0],sensorValBuffer[2][3][0],sensorValBuffer[2][4][0],
+														sensorValBuffer[3][0][0],sensorValBuffer[3][1][0],sensorValBuffer[3][2][0],sensorValBuffer[3][3][0],sensorValBuffer[3][4][0],
+														sensorValBuffer[4][0][0],sensorValBuffer[4][1][0],sensorValBuffer[4][2][0],sensorValBuffer[4][3][0],sensorValBuffer[4][4][0],
+														sensorValBuffer[0][0][1],sensorValBuffer[0][1][1],sensorValBuffer[0][2][1],sensorValBuffer[0][3][1],sensorValBuffer[0][4][1],
+														sensorValBuffer[1][0][1],sensorValBuffer[1][1][1],sensorValBuffer[1][2][1],sensorValBuffer[1][3][1],sensorValBuffer[1][4][1],
+														sensorValBuffer[2][0][1],sensorValBuffer[2][1][1],sensorValBuffer[2][2][1],sensorValBuffer[2][3][1],sensorValBuffer[2][4][1],
+														sensorValBuffer[3][0][1],sensorValBuffer[3][1][1],sensorValBuffer[3][2][1],sensorValBuffer[3][3][1],sensorValBuffer[3][4][1],
+														sensorValBuffer[4][0][1],sensorValBuffer[4][1][1],sensorValBuffer[4][2][1],sensorValBuffer[4][3][1],sensorValBuffer[4][4][1],
+														sensorValBuffer[0][0][2],sensorValBuffer[0][1][2],sensorValBuffer[0][2][2],sensorValBuffer[0][3][2],sensorValBuffer[0][4][2],
+														sensorValBuffer[1][0][2],sensorValBuffer[1][1][2],sensorValBuffer[1][2][2],sensorValBuffer[1][3][2],sensorValBuffer[1][4][2],
+														sensorValBuffer[2][0][2],sensorValBuffer[2][1][2],sensorValBuffer[2][2][2],sensorValBuffer[2][3][2],sensorValBuffer[2][4][2],
+														sensorValBuffer[3][0][2],sensorValBuffer[3][1][2],sensorValBuffer[3][2][2],sensorValBuffer[3][3][2],sensorValBuffer[3][4][2],
+														sensorValBuffer[4][0][2],sensorValBuffer[4][1][2],sensorValBuffer[4][2][2],sensorValBuffer[4][3][2],sensorValBuffer[4][4][2]);
 	
-	for(int i=0;i<10;i++){
-		for(int j=0;j<10;j++){
-			for(int k=0;k<10;k++){
-				errorVal[i*100+j*10+k] = 0;
-				for(int sensorCnt = 0 ; sensorCnt <25 ;sensorCnt++){
-					relativeZ = k - 20;
-					TargetMagZ = 0;
-					errorVal[i*100+j*10+k] += 
-						fastAbs(TargetMagZ - sensorValBuffer[sensorCnt/5][sensorCnt%5][2]);
-				}
-			}
-		}
-	}
-	minNum = 65535;
-	for(int i=0;i<1000;i++){
-		if(errorVal[i]<minNum){
-			minIndex = i;
-			minNum = errorVal[i];
-		}
-	}
-	//HAL_Delay(9);
-	timeSpent = TIM2->CNT *100;
+	HAL_UART_Transmit_DMA(&huart1, txBuffer, strlen((char *)txBuffer));
 	
-//	printf("\n\n");
-//	printf("x:");
-//	for(int i=0;i<25;i++){
-//		printf("%d,",(i/5)*5 -10);
-//	}
-//		printf("\ny:");
-//	for(int i=0;i<25;i++){
-//		printf("%d,",-((i%5)*5 -10));
-//	}
-//		printf("\nz:");
-//	for(int i=0;i<25;i++){
-//		printf("%d,",0);
-//	}
-//			
-	printf("U ");
-	for(int i=0;i<25;i++){
-		printf("%d ",sensorValBuffer[i/5][i%5][0]);
-	}		
-	printf("\nV  ");
-	for(int i=0;i<25;i++){
-		printf("%d ",sensorValBuffer[i/5][i%5][1]);
-	}		
-	printf("\nW ");
-	for(int i=0;i<25;i++){
-		printf("%d ",sensorValBuffer[i/5][i%5][2]);
-	}
-	printf("\n");
-	
-	//printf("Ts:%dus\n",timeSpent);
-
-	//readSensorData(sensorList[4],(uint32_t*)testVal); // Center Pos
-	//printf("x:%04.3f,y:%04.3f,z:%04.3f,Mag:%06.3fuT\n",testVal[0]*0.00625,testVal[1]*0.00625,testVal[2]*0.00625,sqrt(0.00625*(testVal[0]*testVal[0]+testVal[1]*testVal[1]+testVal[2]*testVal[2])*0.00625));
+	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
   }
   /* USER CODE END 3 */
 }
@@ -282,12 +252,13 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();

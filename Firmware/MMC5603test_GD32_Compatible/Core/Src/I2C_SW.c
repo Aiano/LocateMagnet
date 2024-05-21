@@ -11,6 +11,8 @@
 
 #include "I2C_SW.h"
 
+#define I2C_DELAY_TIME 0
+
 /* 定义控制 SDA SCL 的宏 HAL库版    */
 
 #define I2C_SDA_UP        HAL_GPIO_WritePin(iic.sdaGroup,iic.sdaPin,GPIO_PIN_SET)              //SDA高电平
@@ -35,9 +37,9 @@ void i2c_start(SWI2C iic)
 {
     I2C_SDA_UP;
     I2C_SCL_UP;
-    delay_us(50);
+    delay_us(I2C_DELAY_TIME);
     I2C_SDA_LOW;      //启动开始信号
-    delay_us(50);
+    delay_us(I2C_DELAY_TIME);
     I2C_SCL_LOW;      //钳住I2C总线，准备发送或接收数据
 }
 
@@ -51,11 +53,11 @@ void i2c_start(SWI2C iic)
 void i2c_stop(SWI2C iic)
 {
     I2C_SDA_LOW;         //发送结束条件的数据信号
-	delay_us(50);
+	delay_us(I2C_DELAY_TIME);
     I2C_SCL_UP;
-    delay_us(50);         //结束条件建立时间大于5μ
+    delay_us(I2C_DELAY_TIME);         //结束条件建立时间大于5μ
     I2C_SDA_UP;         //发送I2C总线结束信号
-    delay_us(50);
+    delay_us(I2C_DELAY_TIME);
 }
 
 
@@ -75,9 +77,9 @@ void i2c_send(SWI2C iic,uint8_t dat)
        }else{
           I2C_SDA_UP;
        }
-       delay_us(50);
+       delay_us(I2C_DELAY_TIME);
        I2C_SCL_UP;
-       delay_us(50);
+       delay_us(I2C_DELAY_TIME);
        I2C_SCL_LOW;
    }
 	 I2C_SDA_UP;
@@ -97,9 +99,9 @@ uint8_t i2c_read(SWI2C iic)
    I2C_SDA_UP;                     //释放总线准备接收
    for(temp=0x80;temp!=0;temp>>=1)
    {
-      delay_us(50);
+      delay_us(I2C_DELAY_TIME);
       I2C_SCL_UP;
-	  delay_us(50);
+	  delay_us(I2C_DELAY_TIME);
 	  I2C_SDA_UP;
       if(I2C_SDA==1)
          dat|=temp;
@@ -122,9 +124,9 @@ char i2c_wit_ack(SWI2C iic)
     
 	uint8_t con=0;
 	I2C_SDA_UP;       //释放数据线，准备接收应答
-	delay_us(50);
+	delay_us(I2C_DELAY_TIME);
 	I2C_SCL_UP;       //CPU驱动SCL = 1, 此时器件会返回ACK应答
-	delay_us(50);
+	delay_us(I2C_DELAY_TIME);
   while( I2C_SDA )    //CPU读取SDA口线状态
   {
 		con++;
@@ -135,7 +137,7 @@ char i2c_wit_ack(SWI2C iic)
 		}
   }
   I2C_SCL_LOW; 
-  delay_us(50);
+  delay_us(I2C_DELAY_TIME);
   return 0;             //有应答
 }
 
@@ -148,11 +150,11 @@ char i2c_wit_ack(SWI2C iic)
 void i2c_ack(SWI2C iic)
 {
     I2C_SDA_LOW;
-    delay_us(50);
+    delay_us(I2C_DELAY_TIME);
     I2C_SCL_UP;            //CPU产生1个时钟
-    delay_us(50);         //时钟低电平周期大于4μ
+    delay_us(I2C_DELAY_TIME);         //时钟低电平周期大于4μ
     I2C_SCL_LOW;         //清时钟线，钳住I2C总线以便继续接收
-    delay_us(50);
+    delay_us(I2C_DELAY_TIME);
     I2C_SDA_UP;            //CPU释放SDA总线
 }
 
@@ -166,11 +168,11 @@ void i2c_ack(SWI2C iic)
 void i2c_no_ack(SWI2C iic)
 {
    I2C_SDA_UP;
-   delay_us(50);
+   delay_us(I2C_DELAY_TIME);
    I2C_SCL_UP;
-   delay_us(50);
+   delay_us(I2C_DELAY_TIME);
    I2C_SCL_LOW;
-   delay_us(50);
+   delay_us(I2C_DELAY_TIME);
 }
 
 
@@ -195,7 +197,7 @@ uint16_t as5600read(SWI2C iic)
 		i2c_no_ack(iic);
 	  angle=angle<<8;
 		i2c_stop(iic);
-		delay_us(50);
+		delay_us(I2C_DELAY_TIME);
 	
     i2c_start(iic);
     i2c_send(iic,0x36<<1);
@@ -239,7 +241,7 @@ void i2cReadByte(SWI2C iicInterface,uint8_t deviceAddr,uint8_t regAddr,uint8_t l
 	i2c_send(iicInterface,regAddr);
 	if(i2c_wit_ack(iicInterface)) printf("No ACK\n");
 	
-	delay_us(50);
+	delay_us(I2C_DELAY_TIME);
 	i2c_start(iicInterface);
 	i2c_send(iicInterface,deviceAddr | 0x01); 
 	if(i2c_wit_ack(iicInterface)) printf("No ACK\n");
@@ -261,5 +263,5 @@ void i2cReadByte(SWI2C iicInterface,uint8_t deviceAddr,uint8_t regAddr,uint8_t l
 void delay_us(uint32_t i)
 {
 	TIM1->CNT=0;             //清零计数器
-    while(TIM2->CNT<i);     //等待时间到达
+  while(TIM1->CNT<i);     //等待时间到达
 }
